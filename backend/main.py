@@ -151,6 +151,7 @@ def save_to_repo(req: SaveRequest) -> dict:
         extras_block = "\n\n## Latest extras saved\n\n" + "\n".join(
             f"- `{p}`" for p in extra_saved.values()
         )
+    rel_server = server_path.relative_to(REPO_ROOT).as_posix()
     progress_path.write_text(
         f"# Pellet Tracker — your in-progress server\n\n"
         f"Last passed: **World {req.world}, Level {req.level} — {title}**\n\n"
@@ -158,13 +159,13 @@ def save_to_repo(req: SaveRequest) -> dict:
         f"The current `server.py` is the cumulative working code through that level."
         f"{extras_block}\n\n"
         f"## How to use it\n\n"
-        f"```bash\n"
-        f"# Run it directly:\n"
-        f"python {server_path.relative_to(REPO_ROOT)}\n\n"
-        f"# Register with Claude Code (project scope):\n"
-        f"claude mcp add pellet-tracker \\\n"
-        f"    --command python \\\n"
-        f"    --args ./{server_path.relative_to(REPO_ROOT)}\n"
+        f"Run it directly (use `python` on Windows, `python3` on macOS/Linux if `python` is unset):\n\n"
+        f"```\n"
+        f"python {rel_server}\n"
+        f"```\n\n"
+        f"Register with Claude Code (project scope):\n\n"
+        f"```\n"
+        f"claude mcp add pellet-tracker --command python --args ./{rel_server}\n"
         f"```\n"
     )
     return {
