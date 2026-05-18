@@ -119,7 +119,7 @@ from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("pellet-tracker")
 
-# Server state — survives across tool calls within one Claude session.
+# Server state - survives across tool calls within one Claude session.
 PELLETS: list[str] = []
 
 
