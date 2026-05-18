@@ -1,0 +1,28 @@
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/pellets.json
+*.pyc
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+frontend/dist-types/
+frontend/*.tsbuildinfo
+
+# OS / editor
+.DS_Store
+*.log
+
+# Secrets — never commit
+.env
+
+# Claude-Code personal state (each developer has their own)
+.claude/settings.local.json
+
+# Personal play artifacts — the academy auto-creates these when the user
+# clears levels. Each player generates their own; fresh clones start
+# without them.
+.claude/mcp_servers/pellet-tracker/
+.claude/skills/pellet-tracker/

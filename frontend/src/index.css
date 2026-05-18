@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background: #0a0a14;
+  color: #ffe98a;
+}
+
+body {
+  font-family: "VT323", "Courier New", monospace;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+/* Pixel-perfect rendering ONLY for the arcade display font.
+   Body text stays smooth and readable. */
+.font-arcade,
+h1, h2, h3, h4 {
+  font-family: "Press Start 2P", monospace;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  letter-spacing: 0.02em;
+}
+
+/* Subtle CRT scanline overlay */
+.crt-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 50;
+  mix-blend-mode: overlay;
+}
+
+.crt-overlay::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
+  z-index: 51;
+}
+
+.neon-yellow { color: #FFFF00; text-shadow: 0 0 8px #FFFF00, 0 0 20px rgba(255,255,0,0.6); }
+.neon-cyan   { color: #00FFFF; text-shadow: 0 0 8px #00FFFF, 0 0 20px rgba(0,255,255,0.55); }
+.neon-pink   { color: #FFB8FF; text-shadow: 0 0 8px #FFB8FF, 0 0 20px rgba(255,184,255,0.55); }
+.neon-red    { color: #FF0000; text-shadow: 0 0 8px #FF0000, 0 0 20px rgba(255,0,0,0.55); }
+.neon-orange { color: #FFB852; text-shadow: 0 0 8px #FFB852, 0 0 20px rgba(255,184,82,0.55); }
+.neon-blue   { color: #2121FF; text-shadow: 0 0 8px #4848FF, 0 0 20px rgba(72,72,255,0.7); }
+
+.arcade-card {
+  background: linear-gradient(180deg, #0d0d22 0%, #08081a 100%);
+  border: 2px solid #2121FF;
+  box-shadow: inset 0 0 0 2px #0a0a14, 0 0 18px rgba(33, 33, 255, 0.35);
+}
+
+.arcade-btn {
+  font-family: "Press Start 2P", monospace;
+  -webkit-font-smoothing: none;
+  letter-spacing: 0.05em;
+  padding: 12px 18px;
+  border: 2px solid currentColor;
+  background: rgba(0,0,0,0.35);
+  transition: transform 0.05s ease-out, box-shadow 0.1s ease-out;
+}
+.arcade-btn:hover:not(:disabled) {
+  box-shadow: 0 0 0 2px currentColor, 0 0 18px currentColor;
+}
+.arcade-btn:active:not(:disabled) {
+  transform: translateY(2px);
+}
+.arcade-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Used by Pac-Man icon */
+.pacman-mouth {
+  background: #FFFF00;
+  clip-path: polygon(100% 25%, 35% 50%, 100% 75%, 100% 100%, 0 100%, 0 0, 100% 0);
+  filter: drop-shadow(0 0 8px #FFFF00);
+}
+
+/* Used by ghost icons */
+.ghost-body {
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* JSON-RPC inspector */
+.trace-row-out { border-left: 3px solid #FFFF00; }
+.trace-row-in  { border-left: 3px solid #00FFFF; }
+.trace-row-log { border-left: 3px solid #FFB852; }
+
+/* Marquee blinking text */
+.blink {
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Markdown defaults */
+.arcade-md > *:first-child { margin-top: 0; }
+.arcade-md pre { background: rgba(0,0,0,0.7); }
+.arcade-md code { word-break: break-word; }
+.arcade-md pre code { word-break: normal; }
