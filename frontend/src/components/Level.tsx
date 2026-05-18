@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchLesson, runCode, saveToRepo, type SaveResponse } from "../api";
 import { sfx } from "../audio";
+import { clearLevelState, loadLevelState, saveLevelState } from "../levelStore";
 import type { LessonDetail, RunResponse } from "../types";
 import { ArcadeMarkdown } from "./ArcadeMarkdown";
 import { CodeEditor } from "./CodeEditor";
@@ -27,15 +28,25 @@ export function Level({ world, level, onExit, onClear }: Props) {
 
   useEffect(() => {
     setLesson(null);
-    setResult(null);
     setShowComplete(false);
+    const saved = loadLevelState(world, level);
+    setResult(saved?.result ?? null);
     fetchLesson(world, level)
       .then((l) => {
         setLesson(l);
-        setCode(l.starter_code);
+        setCode(saved?.code ?? l.starter_code);
       })
       .catch((e) => setErr(String(e)));
   }, [world, level]);
+
+  // Persist code + last run result so navigating away and back restores
+  // the user's scratchpad. Gated on the loaded lesson matching the active
+  // params, so we don't overwrite a saved slot with stale state during the
+  // brief moment between fetch start and fetch completion.
+  useEffect(() => {
+    if (!lesson || lesson.world !== world || lesson.level !== level) return;
+    saveLevelState(world, level, { code, result });
+  }, [world, level, lesson, code, result]);
 
   if (err) {
     return (
@@ -206,6 +217,7 @@ export function Level({ world, level, onExit, onClear }: Props) {
             setShowComplete(false);
             setCode(lesson.starter_code);
             setResult(null);
+            clearLevelState(world, level);
           }}
         />
       )}

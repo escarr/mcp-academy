@@ -4,6 +4,7 @@ import { IntroScreen } from "./components/IntroScreen";
 import { Level } from "./components/Level";
 import { WorldDetail } from "./components/WorldDetail";
 import { WorldMap } from "./components/WorldMap";
+import { clearAllLevelState } from "./levelStore";
 import { loadSave, markCleared, saveSave } from "./store";
 
 type Screen =
@@ -34,6 +35,7 @@ export default function App() {
         cleared={save.clearedLevels.length}
         onReset={() => {
           if (confirm("Wipe save game?")) {
+            clearAllLevelState();
             setSave({ pellets: 0, clearedLevels: [], introSeen: false });
             setScreen({ kind: "intro" });
           }
