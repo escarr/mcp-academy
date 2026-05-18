@@ -59,20 +59,28 @@ def find_npm() -> str:
     return exe
 
 
+INSTALL_MARKER = VENV / ".install-complete"
+
+
 def ensure_venv() -> None:
-    if VENV.exists():
+    if not VENV.exists():
+        py = find_system_python()
+        print("▌ creating backend venv…")
+        subprocess.check_call([py, "-m", "venv", str(VENV)])
+    if INSTALL_MARKER.exists():
         return
-    py = find_system_python()
-    print("▌ creating backend venv…")
-    subprocess.check_call([py, "-m", "venv", str(VENV)])
-    # Drive pip through the venv's python rather than calling pip.exe directly.
-    # Since pip 25.2, self-upgrading via the pip console script hard-fails on
-    # Windows — it can't replace its own running executable.
+    # Marker absent → either a fresh venv, or a previous setup crashed mid-install
+    # (e.g. the pip 25.2 self-upgrade bug). Either way, run pip install now so
+    # the venv is left in a known-good state. Drive pip through the venv's
+    # python rather than pip.exe directly — since pip 25.2 the console-script
+    # form can't self-upgrade on Windows (can't replace its running .exe).
+    print("▌ installing backend deps…")
     venv_py = str(venv_bin("python"))
     subprocess.check_call([venv_py, "-m", "pip", "install", "--upgrade", "pip"])
     subprocess.check_call(
         [venv_py, "-m", "pip", "install", "-r", str(BACKEND / "requirements.txt")]
     )
+    INSTALL_MARKER.touch()
 
 
 def ensure_node_modules() -> None:
@@ -91,8 +99,14 @@ def spawn(cmd: list[str], cwd: Path) -> subprocess.Popen:
 
 
 def backend_cmd() -> list[str]:
+    # Invoke uvicorn as a module of the venv's python instead of relying on the
+    # `uvicorn.exe` / `uvicorn` console script. The script wrapper sometimes
+    # goes missing on Windows (broken pip installs, AV quarantine) — running
+    # `python -m uvicorn` bypasses that entirely.
     return [
-        str(venv_bin("uvicorn")),
+        str(venv_bin("python")),
+        "-m",
+        "uvicorn",
         "main:app",
         "--reload",
         "--port",
