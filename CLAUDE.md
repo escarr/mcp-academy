@@ -35,7 +35,9 @@ mcp-teacher/
 ├── CLAUDE.md              ← you are here (project OS)
 ├── README.md              ← human onboarding + run instructions
 ├── DECISIONS.md           ← append-only log of design decisions
-├── start.sh               ← boots backend + frontend
+├── start.py               ← cross-platform launcher (real entry point)
+├── start.sh               ← POSIX shim → start.py
+├── start.bat              ← Windows shim → start.py
 ├── .env.example           ← template for runtime secrets
 ├── .gitignore
 │
@@ -155,7 +157,9 @@ binding when reviewing or writing code in the relevant area.
 ## 5. Running the project
 
 ```bash
-./start.sh        # boots both services
+python start.py   # works on macOS, Linux, Windows
+./start.sh        # POSIX shim
+start.bat         # Windows shim
 ```
 - Backend: <http://127.0.0.1:8000>  ·  health: `/api/health`
 - Frontend: <http://127.0.0.1:5173>
@@ -164,6 +168,6 @@ binding when reviewing or writing code in the relevant area.
 
 - New to MCP? Open `frontend/src/components/Level.tsx` and `backend/grader.py` side-by-side — together they show the full request/response cycle.
 - Adding a level? Append to `LESSONS` in `backend/lessons.py`. The frontend will pick it up automatically.
-- After any lesson change, run `backend/.venv/bin/python backend/_test_all_levels.py` to make sure the canonical solutions still pass.
+- After any lesson change, run `python start.py --test` to make sure the canonical solutions still pass.
 - Tweaking the arcade aesthetic? `frontend/src/index.css` + `tailwind.config.js`.
 - Considering a permissions change? Edit `.claude/settings.json` and log it.

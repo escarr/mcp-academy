@@ -28,8 +28,12 @@ Clearing a world's last level unlocks the next world.
 
 ## Run it
 
+One command, any OS:
+
 ```bash
-./start.sh
+python start.py        # macOS, Linux, Windows — works everywhere
+./start.sh             # macOS / Linux convenience shim
+start.bat              # Windows convenience shim (cmd.exe or double-click)
 ```
 
 First run creates `backend/.venv`, installs Python deps, runs
@@ -39,6 +43,15 @@ First run creates `backend/.venv`, installs Python deps, runs
 - Backend:  <http://127.0.0.1:8000>  ·  health: `/api/health`
 
 Ctrl+C kills both.
+
+Other modes:
+
+```bash
+python start.py --setup      # install deps and exit (no servers)
+python start.py --backend    # backend only
+python start.py --frontend   # frontend only
+python start.py --test       # run the lesson smoke test
+```
 
 On first visit you get an **intro screen** with a marquee, the end-state
 demo, and a tour of the 8 worlds. Replayable any time via the `▸ INTRO`
@@ -50,7 +63,9 @@ button in the HUD.
 mcp-teacher/
 ├── CLAUDE.md              ← project OS (auto-loaded by Claude Code)
 ├── DECISIONS.md           ← append-only design-decision log
-├── start.sh               ← boots both services
+├── start.py               ← cross-platform launcher (the real entry point)
+├── start.sh               ← POSIX shim → start.py
+├── start.bat              ← Windows shim → start.py
 ├── .env.example           ← template for future secrets
 ├── .claude/
 │   ├── settings.json      ← shared permissions
@@ -120,8 +135,11 @@ without needing a real LLM.
 
 ## Requirements
 
-- Python 3.10+ (3.13 found at `/usr/local/bin/python3.13` on this machine)
-- Node 18+ (Node 22 is fine)
+- Python 3.10+ on PATH as `python` or `python3` (3.11+ recommended)
+- Node 18+ on PATH (Node 22 is fine)
+
+Windows users: install Python from <https://www.python.org/downloads/>
+with "Add to PATH" checked, and Node LTS from <https://nodejs.org/>.
 
 ## Reset save
 
@@ -131,7 +149,7 @@ Click `RESET` in the top-right HUD (also wipes intro-seen state), or
 ## Verify the curriculum from the CLI
 
 ```bash
-cd backend && .venv/bin/python _test_all_levels.py
+python start.py --test
 ```
 
 Expects `ALL GOOD (23 lessons)`.

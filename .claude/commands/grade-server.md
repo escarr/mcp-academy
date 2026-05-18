@@ -15,6 +15,9 @@ npx @modelcontextprotocol/inspector \
     python .claude/mcp_servers/pellet-tracker/server.py
 ```
 
+On Windows, if `python` isn't on PATH but the py launcher is, swap
+`python` for `py -3` in the command above.
+
 After it starts, open the URL it prints (usually <http://localhost:6274>)
 and:
 

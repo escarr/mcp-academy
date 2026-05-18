@@ -13,6 +13,13 @@ Append-only. Most recent on top. Use the template below.
 
 ---
 
+## 2026-05-18 — Cross-platform launcher (`start.py`) as the single entry point
+**Author:** human + claude
+**Context:** A learner cloned the repo onto a Windows machine and both setup and grading failed. The bash `start.sh` couldn't run, `.claude/launch.json` pointed at `.venv/bin/uvicorn` (Windows uses `.venv\Scripts\uvicorn.exe`), and several docs assumed POSIX paths. The grader runtime itself was already portable.
+**Decision:** Make `start.py` the real launcher (stdlib only, ~150 lines). It detects OS, resolves `bin/` vs `Scripts/` for the venv, spawns both services with `subprocess.Popen`, and handles Ctrl+C shutdown cross-platform. Keep `start.sh` and add `start.bat` as one-line shims into `start.py`. Switch `.claude/launch.json` to call `python start.py --backend|--frontend` so per-OS venv resolution happens inside the launcher. Add `--setup` and `--test` subcommands so docs can reference one tool instead of OS-specific incantations.
+**Alternatives:** (1) Parallel `start.sh` + `start.ps1` — duplicated logic, will drift. (2) `npm run start` with `concurrently` — adds a Node orchestration dep and still needs venv resolution somewhere. (3) WSL-only Windows fallback — defeats the "easy setup" requirement for the academy's audience.
+**Consequences:** Python ≥ 3.10 on PATH is now a hard prereq (was implicit before via venv creation). The launch.json preview targets rely on `python` being PATH-resolvable; if it isn't, the launch fails with a clear OS-level error users can act on. Future setup logic (e.g., copying `.env.example`, installing extras for later worlds) now has one obvious home.
+
 ## 2026-05-16 — 23-level curriculum, world reorder, strict locking, save-to-repo, intro screen
 **Author:** human + claude
 **Context:** Reviewed against modern MCP best practices. Original 11-level curriculum was missing sampling, elicitation, structured output, OAuth 2.1, DXT packaging, the MCP Inspector, persistence, resource templates, and Claude Code's `.mcp.json`. Also: levels were freely accessible (confusing because each starter assumes prior code is in place), and player work didn't materialize anywhere in the repo.

@@ -3,17 +3,17 @@
   "configurations": [
     {
       "name": "frontend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["start.py", "--frontend"],
       "port": 5173,
-      "cwd": "${workspaceFolder}/frontend"
+      "cwd": "${workspaceFolder}"
     },
     {
       "name": "backend",
-      "runtimeExecutable": ".venv/bin/uvicorn",
-      "runtimeArgs": ["main:app", "--reload", "--port", "8000", "--host", "127.0.0.1"],
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["start.py", "--backend"],
       "port": 8000,
-      "cwd": "${workspaceFolder}/backend"
+      "cwd": "${workspaceFolder}"
     }
   ]
 }
