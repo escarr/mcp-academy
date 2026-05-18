@@ -65,9 +65,14 @@ def ensure_venv() -> None:
     py = find_system_python()
     print("▌ creating backend venv…")
     subprocess.check_call([py, "-m", "venv", str(VENV)])
-    pip = venv_bin("pip")
-    subprocess.check_call([str(pip), "install", "--upgrade", "pip"])
-    subprocess.check_call([str(pip), "install", "-r", str(BACKEND / "requirements.txt")])
+    # Drive pip through the venv's python rather than calling pip.exe directly.
+    # Since pip 25.2, self-upgrading via the pip console script hard-fails on
+    # Windows — it can't replace its own running executable.
+    venv_py = str(venv_bin("python"))
+    subprocess.check_call([venv_py, "-m", "pip", "install", "--upgrade", "pip"])
+    subprocess.check_call(
+        [venv_py, "-m", "pip", "install", "-r", str(BACKEND / "requirements.txt")]
+    )
 
 
 def ensure_node_modules() -> None:
