@@ -61,7 +61,7 @@ class StdioMCPClient:
         self.source = code
         self.workdir = workdir
         script = workdir / "server.py"
-        script.write_text(code)
+        script.write_text(code, encoding="utf-8")
         self.proc = await asyncio.create_subprocess_exec(
             PYTHON_CMD, "-u", str(script),
             stdin=asyncio.subprocess.PIPE,
